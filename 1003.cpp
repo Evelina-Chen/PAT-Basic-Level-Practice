@@ -1,63 +1,48 @@
 #include<iostream>
+#include<map>
 using namespace std;
-string str;
-int len;
-int fun0(int n)//判断第n+1个字符是否为A 
+bool fun(string s,int len)//判断字符串是否有P、A、T以外的字符
 {
-	if(str[n+1]=='A')
-	return 1;
-	else
-	return 0;
-} 
-int fun1(int n)//判断是否为P、A、T以外的字符
-{
-	if(str[n]!='P'&&str[n]!='T'&&str[n]!='A')
-	return 0;
-	else
-	return 1;
-}
-int fun2(int n)//判断是否为形如xPATx或是xPA...ATx 
-{
-	int i=n;
-	int f0=fun0(n);
-	while(str[f0]==1)
+	for(int i=0;i<len;i++)
 	{
-		f0=fun0(++i);
+		if(s[i]!='P'&&s[i]!='A'&&s[i]!='T')
+		return 0;//字符串中出现了非P、A、T的字符 
 	}
-	if(str[++i]=='T')
-	return 1;
-	else
-	return 0;
+	return 1;//字符串完全由P、A、T构成 
 }
 int main()
 {
-	int b=0,n,f1,f2;
+	int n;
 	cin>>n;
 	while(n--)
 	{
-		cin>>str;
-		len=str.length();
+		string s;
+		map<char,int> m;//记录每个字符出现的次数 
+		int a,b,c,len;//a=P前A的数量，b=PT间A的数量，c=T后A的数量 
+		cin>>s;
+		len=s.length();
+		if(!fun(s,len))//字符串中出现了非P、A、T的字符
+		{cout<<"NO"<<endl;
+		continue;}
 		for(int i=0;i<len;i++)
 		{
-			int f1=fun1(i); 
-			if(f1==0)
+			m[s[i]]++;//s[i]的字符的数量+1 
+			if(s[i]=='P')//由条件2可得，字符串中只能出现一个P，即P出现了就可以求得a的值 
+			a=i;//a的值同样代表了P出现的数组标号 
+			if(s[i]=='T')//由条件2可得，字符串中只能出现一个T，即T出现了就可以求得b,c的值
 			{
-				b=0;
-				break;
-			}
-			if(str[i]=='P')
-				f2=fun2(i);
-			if(f2==0)
-			{
-				b=0;
-				break;
-			}
-			b++;
+				b=i-a-1;//i此时等于T出现的数组编号，a等于P出现的数组编号
+				c=len-i-1; 
+			} 
 		}
-		if(b==0)
-			cout<<"NO"<<endl;
+		if(m['P']!=1||m['T']!=1)//P、T出现的次数不为1 
+		{cout<<"NO"<<endl;
+		continue;}
+		if(c==a*b&&b>0)
+		cout<<"YES"<<endl;
 		else
-			cout<<"YES"<<endl;
-		b=0;
+		{cout<<"NO"<<endl;
+		continue;}
 	}
-}
+	return 0;
+} 
